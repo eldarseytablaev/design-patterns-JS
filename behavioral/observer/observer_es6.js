@@ -1,41 +1,40 @@
-class Product {
+class ObjObservable {
   constructor() {
-    this.price = 0
-    this.actions = []
+    this.observers = []
   }
 
-  setBasePrice(val) {
-    this.price = val
-    this.notifyAll()
+  subscribeObserver(observer) {
+    this.observers.push(observer)
   }
 
-  register(observer) {
-    this.actions.push(observer)
+  unsubscribeObserver(observer) {
+    this.observers = this.observers.filter(item => item !== observer)
   }
 
-  unregister(observer) {
-    this.actions.remove.filter(function(el) {
-      return el !== observer
-    })
+  notifyObserver(observer, msg = null) {
+    const observerFound = this.observers.find(item => item === observer)
+    if (observerFound) {
+      observerFound.notify(msg)
+    }
   }
 
-  notifyAll() {
-    return this.actions.forEach((el) => {
-      el.update(this)
-    })
+  notifyAllObservers(msg = null) {
+    this.observers.forEach(observer => observer.notify(msg))
   }
-}
 
-class Fees {
-  update(product) {
-    product.price = product.price * 1.2
+  getObservers() {
+    return this.observers
   }
 }
 
-class Proft {
-  update(product) {
-    product.price = product.price * 2
+class Observer {
+  constructor(behavior) {
+    return {
+      notify: (msg = null) => {
+        behavior(msg)
+      }
+    }
   }
 }
 
-module.exports = { Product, Fees, Proft }
+module.exports = { ObjObservable, Observer }
