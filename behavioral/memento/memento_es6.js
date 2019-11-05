@@ -1,30 +1,70 @@
+/**
+ * Хранитель состояния
+ */
 class Memento {
-  constructor(value) {
-    this.value = value
+  constructor(state) {
+    this._state = state
+  }
+
+  getState() {
+    return this._state
   }
 }
 
-const originator = {
-  store: function(val) {
-    return new Memento(val)
-  },
-  restore: function(memento) {
-    return memento.value
+/**
+ * Создателем
+ */
+class Originator {
+  constructor() {
+    this._state = null
+  }
+
+  setState(state) {
+    this._state = state
+  }
+
+  getState() {
+    return this._state
+  }
+
+  /**
+   * Создать снимок состояния объекта
+   * @returns {Memento}
+   */
+  createMemento() {
+    return new Memento(this._state)
+  }
+
+  /**
+   * Восстановить состояние
+   * @param {Memento} memento
+   */
+  setMemento(memento) {
+    this._state = memento.getState()
   }
 }
 
+/**
+ * Опекун
+ */
 class Caretaker {
   constructor() {
-    this.values = []
+    this._memento = null
   }
 
-  addMemento(memento) {
-    this.values.push(memento)
+  /**
+   * @param {Memento} memento
+   */
+  setMemento(memento) {
+    this._memento = memento
   }
 
-  getMemento(index) {
-    return this.values[index]
+  /**
+   * @return {Memento}
+   */
+  getMemento() {
+    return this._memento
   }
 }
 
-module.exports = { originator, Caretaker }
+module.exports = { Originator, Caretaker }
