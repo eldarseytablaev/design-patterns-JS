@@ -1,18 +1,28 @@
 const assert = require('assert')
 
-const { originator, Caretaker } = require('../../../behavioral/memento/memento')
+const { Originator, Caretaker } = require('../../../behavioral/memento/memento')
 
 describe('memento tests', () => {
 
   it('sanity', () => {
-    const careTaker = new Caretaker()
-    careTaker.addMemento(originator.store('hello'))
-    careTaker.addMemento(originator.store('hello world'))
-    careTaker.addMemento(originator.store('hello world !!!'))
+    const originator = new Originator()
+    originator.setState('On')
 
+    // Store internal state
+    const caretaker = new Caretaker()
+    caretaker.setMemento(originator.createMemento())
+    const result = originator.getState()
+    assert.strictEqual(result, 'On')
 
-    const result = originator.restore(careTaker.getMemento(1))
-    assert.strictEqual(result, 'hello world')
+    // Continue changing originator
+    originator.setState('Off')
+    const result2 = originator.getState()
+    assert.strictEqual(result2, 'Off')
+
+    // Restore saved state
+    originator.setMemento(caretaker.getMemento())
+    const result3 = originator.getState()
+    assert.strictEqual(result3, 'On')
   })
 
 })

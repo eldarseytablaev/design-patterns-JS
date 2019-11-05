@@ -1,26 +1,43 @@
-function Memento(value) {
-  this.value = value
+/**
+ * Хранитель состояния
+ */
+function Memento(state) {
+  this._state = state
+}
+Memento.prototype.getState = function() {
+  return this._state
 }
 
-const originator = {
-  store: function(val) {
-    return new Memento(val)
-  },
-  restore: function(memento) {
-    return memento.value
-  }
+/**
+ * Создателем
+ */
+function Originator() {
+  this._state = null
+}
+Originator.prototype.setState = function(state) {
+  this._state = state
+}
+Originator.prototype.getState = function() {
+  return this._state
+}
+Originator.prototype.createMemento = function() {
+  return new Memento(this._state)
+}
+Originator.prototype.setMemento = function(memento) {
+  this._state = memento.getState()
 }
 
+/**
+ * Опекун
+ */
 function Caretaker() {
-  this.values = []
+  this._mement = null
+}
+Caretaker.prototype.setMemento = function(memento) {
+  this._memento = memento
+}
+Caretaker.prototype.getMemento = function() {
+  return this._memento
 }
 
-Caretaker.prototype.addMemento = function(memento) {
-  this.values.push(memento)
-}
-
-Caretaker.prototype.getMemento = function(index) {
-  return this.values[index]
-}
-
-module.exports = { originator, Caretaker }
+module.exports = { Originator, Caretaker }
